@@ -34,6 +34,7 @@
             <Setter Property="FontWeight" Value="Bold" />
         </Style>
         <converter:IsNullOrEmptyConverter x:Key="IsNullOrEmptyConverter" />
+        <converter:VersionConverter x:Key="VersionConverter" />
     </Window.Resources>
 
     <Border BorderBrush="{StaticResource PrimaryHueMidBrush}" BorderThickness="1">
@@ -47,11 +48,20 @@
                                  Background="{DynamicResource PrimaryHueMidBrush}"
                                  MouseLeftButtonDown="WindowTitleBar_OnMouseLeftButtonDown"
                                  MinHeight="32">
-                <UniformGrid Columns="2" VerticalAlignment="Center" Margin="0">
+                <UniformGrid Columns="3" VerticalAlignment="Center" Margin="0">
                     <Label
                         Content="{Binding RelativeSource={RelativeSource FindAncestor,
                                     AncestorType={x:Type Window}}, Path=Title}"
                         Margin="10 0 0 0" />
+                    <Label>
+                        <Label.Content>
+                            <MultiBinding Converter="{StaticResource VersionConverter}">
+                                <Binding Path="Ui.Version" UpdateSourceTrigger="PropertyChanged"/>
+                                <Binding Path="WowPath" UpdateSourceTrigger="PropertyChanged"/>
+                                <Binding Path="ReleaseVersion" UpdateSourceTrigger="PropertyChanged" />
+                            </MultiBinding>
+                        </Label.Content>
+                    </Label>
                     <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
                         <Button Style="{StaticResource FlatButton}" Click="Minimize_OnClick">
                             <materialDesign:PackIcon Kind="WindowMinimize" />
@@ -93,8 +103,8 @@
                         <Label Content="STEP #2" FontSize="20" />
                         <ComboBox Name="CbbVersion" FontSize="20" IsReadOnly="True" SelectedIndex="-1"
                                   IsEnabled="{Binding ElementName=TbPath, Path=Text, 
-                            Converter={StaticResource IsNullOrEmptyConverter},
-                            UpdateSourceTrigger=PropertyChanged}"
+                                    Converter={StaticResource IsNullOrEmptyConverter},
+                                    UpdateSourceTrigger=PropertyChanged}"
                                   SelectedItem="{Binding ReleaseVersion, UpdateSourceTrigger=PropertyChanged}"
                                   ItemsSource="{Binding ReleaseVersions, UpdateSourceTrigger=PropertyChanged}" />
                         <TextBlock Text="Select wow version (beta and ptr doesn't work)" FontSize="16"

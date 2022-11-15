@@ -11,6 +11,7 @@ using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Input;
 using ElvUiUpdater.Dialogs;
+using ElvUiUpdater.Model;
 using ElvUiUpdater.Properties;
 using MaterialDesignThemes.Wpf;
 using Ookii.Dialogs.Wpf;
@@ -24,30 +25,40 @@ internal class MainWindowViewModel
     public string WowPath { get; set; }
     public ObservableCollection<string> ReleaseVersions { get; set; }
     public string ReleaseVersion { get; set; }
+    public UiModel? Ui { get; set; }
 
     public MainWindowViewModel()
     {
+        Ui = TukuiApi.GetInstance?.GetElvUi();
         WowPath = Settings.Default.WowPath;
         ReleaseVersions = new ObservableCollection<string>();
         ReleaseVersion = Settings.Default.ReleaseVersion;
 
         if (!string.IsNullOrEmpty(WowPath) && !WowPath.Equals("Root game directory"))
-            ReleaseVersions = FindReleaseVersion(WowPath);
+            if (Directory.Exists(WowPath))
+                ReleaseVersions = FindReleaseVersion(WowPath);
     }
 
-    public ICommand SetPathCommand => new DelegateCommand((obj) =>
+    public ICommand SetPathCommand => new DelegateCommand(async (obj) =>
     {
         var dl = new VistaFolderBrowserDialog();
         if (dl.ShowDialog() == false) return;
-        WowPath = dl.SelectedPath;
-        ReleaseVersions = FindReleaseVersion(WowPath);
+        if (Directory.Exists(Path.Combine(WowPath, "Data")))
+        {
+            WowPath = dl.SelectedPath;
+            ReleaseVersions = FindReleaseVersion(WowPath);
+        }
         if (ReleaseVersions.Count < 1)
-            MessageBox.Show("Selected path not correct.\nPlease select root folder of game.");
-        Settings.Default.WowPath = WowPath;
+        {
+            DialogsController.CloseMessages();
+            await DialogsController.ShowAlertDialog("Selected path not correct.\nPlease select root folder of game.", "MainDialog");
+        } 
+        else Settings.Default.WowPath = WowPath;
     });
 
     public ICommand InstallCommand => new DelegateCommand(async (obj) =>
     {
+        if (Ui is null) return;
         await Task.Run(() =>
         {
             Application.Current.Dispatcher.Invoke(async () =>
@@ -56,15 +67,12 @@ internal class MainWindowViewModel
                 await DialogsController.ShowLoadingDialog("MainDialog");
             });
 
-            var ui = TukuiApi.GetInstance?.GetElvUi();
             var path = Path.Combine(WowPath, ReleaseVersion, "Interface", "Addons");
-
-            WowPath = path;
 
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
 
-            if (InstallerService.CheckUiVersion(path, ui.Version))
+            if (InstallerService.CheckUiVersion(path, Ui.Version))
             {
                 Application.Current.Dispatcher.Invoke(async () =>
                 {
@@ -74,7 +82,7 @@ internal class MainWindowViewModel
                 return;
             }
 
-            var uiZip = TukuiApi.GetInstance?.DownloadUI(ui.Url!, path);
+            var uiZip = TukuiApi.GetInstance?.DownloadUI(Ui.Url!, path);
             ZipFile.ExtractToDirectory(uiZip, path, true);
 
             File.Delete(uiZip);

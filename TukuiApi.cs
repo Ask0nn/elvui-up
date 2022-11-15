@@ -23,7 +23,7 @@ namespace ElvUiUpdater
         {
         }
 
-        public UiModel GetElvUi()
+        public UiModel? GetElvUi()
         {
             UiModel? result = new UiModel();
             var response = Client.GetAsync(TukuiEndpoint + "?ui=elvui")
