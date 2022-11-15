@@ -1,0 +1,133 @@
+﻿<Window x:Class="ElvUiUpdater.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:converter="clr-namespace:ElvUiUpdater.Converter"
+        xmlns:vm="clr-namespace:ElvUiUpdater.ViewModel"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="13"
+        TextOptions.TextFormattingMode="Ideal"
+        TextOptions.TextRenderingMode="Auto"
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="{DynamicResource MaterialDesignFont}"
+        WindowStyle="None" ResizeMode="NoResize" WindowStartupLocation="CenterScreen"
+        mc:Ignorable="d"
+        Title="ElvUI Updater App" Height="450" Width="800">
+
+    <Window.DataContext>
+        <vm:MainWindowViewModel />
+    </Window.DataContext>
+
+    <Window.Resources>
+        <Style TargetType="{x:Type Separator}">
+            <Setter Property="Margin" Value="6 0 6 0" />
+        </Style>
+        <Style TargetType="{x:Type UniformGrid}">
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Margin" Value="20 10" />
+        </Style>
+        <Style TargetType="Label" BasedOn="{StaticResource MaterialDesignLabel}">
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="FontWeight" Value="Bold" />
+        </Style>
+        <converter:IsNullOrEmptyConverter x:Key="IsNullOrEmptyConverter" />
+    </Window.Resources>
+
+    <Border BorderBrush="{StaticResource PrimaryHueMidBrush}" BorderThickness="1">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+
+            <materialDesign:Card Grid.Row="0" UniformCornerRadius="0"
+                                 Background="{DynamicResource PrimaryHueMidBrush}"
+                                 MouseLeftButtonDown="WindowTitleBar_OnMouseLeftButtonDown"
+                                 MinHeight="32">
+                <UniformGrid Columns="2" VerticalAlignment="Center" Margin="0">
+                    <Label
+                        Content="{Binding RelativeSource={RelativeSource FindAncestor,
+                                    AncestorType={x:Type Window}}, Path=Title}"
+                        Margin="10 0 0 0" />
+                    <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                        <Button Style="{StaticResource FlatButton}" Click="Minimize_OnClick">
+                            <materialDesign:PackIcon Kind="WindowMinimize" />
+                        </Button>
+                        <Button Style="{StaticResource CloseFlatButton}" Click="Close_OnClick">
+                            <materialDesign:PackIcon Kind="WindowClose" />
+                        </Button>
+                    </StackPanel>
+                </UniformGrid>
+            </materialDesign:Card>
+            <materialDesign:DialogHost Grid.Row="1" Identifier="MainDialog" CloseOnClickAway="False">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+
+                    <UniformGrid Grid.Row="0" Columns="3">
+                        <Label Content="STEP #1" FontSize="20" />
+                        <TextBox Name="TbPath" FontSize="20" IsReadOnly="True"
+                                 materialDesign:HintAssist.Hint="Path to WOW directory"
+                                 Text="{Binding Path=WowPath, UpdateSourceTrigger=PropertyChanged}" />
+                        <Button Margin="10 0" MaxWidth="60" HorizontalAlignment="Left"
+                                Command="{Binding SetPathCommand}">
+                            <materialDesign:PackIcon Kind="Folder" />
+                        </Button>
+                    </UniformGrid>
+
+                    <Separator Grid.Row="1" Background="{StaticResource PrimaryHueMidBrush}">
+                        <Separator.RenderTransform>
+                            <ScaleTransform ScaleY="4" />
+                        </Separator.RenderTransform>
+                    </Separator>
+
+                    <UniformGrid Grid.Row="2" Columns="3">
+                        <Label Content="STEP #2" FontSize="20" />
+                        <ComboBox Name="CbbVersion" FontSize="20" IsReadOnly="True" SelectedIndex="-1"
+                                  IsEnabled="{Binding ElementName=TbPath, Path=Text, 
+                            Converter={StaticResource IsNullOrEmptyConverter},
+                            UpdateSourceTrigger=PropertyChanged}"
+                                  SelectedItem="{Binding ReleaseVersion, UpdateSourceTrigger=PropertyChanged}"
+                                  ItemsSource="{Binding ReleaseVersions, UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBlock Text="Select wow version (beta and ptr doesn't work)" FontSize="16"
+                                   TextWrapping="WrapWithOverflow" FontWeight="Bold"
+                                   Margin="10 0 0 0" />
+                    </UniformGrid>
+
+                    <Separator Grid.Row="3" Background="{StaticResource PrimaryHueMidBrush}">
+                        <Separator.RenderTransform>
+                            <ScaleTransform ScaleY="4" />
+                        </Separator.RenderTransform>
+                    </Separator>
+
+                    <UniformGrid Grid.Row="4" Columns="3">
+                        <Label Content="STEP #3" FontSize="20" />
+                        <Button Content="Install/Update" Command="{Binding InstallCommand}">
+                            <Button.Style>
+                                <Style TargetType="{x:Type Button}"
+                                       BasedOn="{StaticResource MaterialDesignRaisedButton}">
+                                    <Setter Property="IsEnabled" Value="True" />
+                                    <Style.Triggers>
+                                        <DataTrigger
+                                            Binding="{Binding ElementName=CbbVersion, Path=SelectedIndex, UpdateSourceTrigger=PropertyChanged}"
+                                            Value="-1">
+                                            <Setter Property="IsEnabled" Value="False" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                    </UniformGrid>
+                </Grid>
+            </materialDesign:DialogHost>
+        </Grid>
+    </Border>
+</Window>
