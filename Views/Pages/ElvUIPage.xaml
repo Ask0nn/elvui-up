@@ -1,0 +1,196 @@
+﻿<ui:UiPage x:Class="ElvUiUpdater.Views.Pages.ElvUIPage"
+           xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+           xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+           xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+           xmlns:local="clr-namespace:ElvUiUpdater.Views.Pages"
+           xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+           xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+           Title="ElvUIPage"
+           d:DataContext="{d:DesignInstance local:ElvUIPage, IsDesignTimeCreatable=False}"
+           d:DesignWidth="800"
+           d:DesignHeight="750"
+           mc:Ignorable="d"
+           Scrollable="True">
+    <Grid>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.Style>
+                <Style TargetType="Grid">
+                    <Setter Property="Visibility" Value="Visible"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding ViewModel.ButtonIsEnabled, Mode=OneWay}" Value="False">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
+
+            <!--Description-->
+            <Border Grid.Row="0" Height="500" CornerRadius="8 0 0 0">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0 0" EndPoint="1 1">
+                        <GradientStop Offset="0" Color="#232526"/>
+                        <GradientStop Offset="1" Color="#414345"/>
+                    </LinearGradientBrush>
+                </Border.Background>
+                <Border CornerRadius="8 0 0 0">
+                    <Border.Background>
+                        <RadialGradientBrush>
+                            <GradientStop Offset="0" Color="#1F000000" />
+                            <GradientStop Offset="1" Color="#4F000000" />
+                        </RadialGradientBrush>
+                    </Border.Background>
+                    <Grid>
+                        <StackPanel Margin="64"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                Background="Transparent">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock FontSize="28"
+                                       FontWeight="Bold"
+                                       Foreground="#FFFFFF"
+                                       Text="ElvUI"/>
+                                <ui:Badge VerticalAlignment="Center"
+                                      Margin="5 -15 0 0"
+                                      Appearance="Success" 
+                                      Content="{Binding ViewModel.WebVersion, Mode=OneWay}"
+                                      ToolTip="Current version"/>
+                                <ui:Badge VerticalAlignment="Center"
+                                      Margin="1 -15 0 0"
+                                      Appearance="Caution" 
+                                      Content="{Binding ViewModel.InstalledVersionRetail, Mode=OneWay}"
+                                      ToolTip="Retail version"/>
+                                <ui:Badge VerticalAlignment="Center"
+                                      Margin="1 -15 0 0"
+                                      Appearance="Caution" 
+                                      Content="{Binding ViewModel.InstalledVersionClassic, Mode=OneWay}"
+                                      ToolTip="Classic version"/>
+                                <ui:Badge VerticalAlignment="Center"
+                                      Margin="1 -15 0 0"
+                                      Appearance="Caution" 
+                                      Content="{Binding ViewModel.InstalledVersionPTR, Mode=OneWay}"
+                                      ToolTip="PTR version"/>
+                            </StackPanel>
+                            <TextBlock FontSize="18" 
+                                   Foreground="#B7FFFFFF"
+                                   Text="A user interface designed around user-friendliness with extra features that are not included in the standard ui."/>
+                            <StackPanel Margin="0 8 0 0" Orientation="Horizontal">
+                                <ui:Button Height="36"
+                                       Padding="30 6"
+                                       Appearance="Transparent"
+                                       Command="{Binding ViewModel.InstallCommand}"
+                                       Content="{Binding ViewModel.ButtonContent, Mode=OneWay}"
+                                       Icon="ArrowDownload24"
+                                       Foreground="{DynamicResource TextFillColorLightPrimaryBrush}"
+                                       IsEnabled="{Binding ViewModel.ButtonIsEnabled, Mode=OneWay}"/>
+                                <ComboBox Padding="30 7"
+                                      Margin="5 0 0 0"
+                                      ItemsSource="{Binding ViewModel.VersionTypes, Mode=OneWay}"
+                                      SelectedItem="{Binding ViewModel.VersionType, Mode=TwoWay}">
+
+                                </ComboBox>
+                            </StackPanel>
+                        </StackPanel>
+                        <TextBlock Margin="12"
+                               HorizontalAlignment="Right"
+                               VerticalAlignment="Bottom"
+                               FontSize="10"
+                               Foreground="#57FFFFFF"
+                               Text="Created by Tukui.org" />
+                    </Grid>
+                </Border>
+            </Border>
+
+            <!--Card Actions-->
+            <Grid Grid.Row="1" Margin="12 12 12 0">
+                <ui:CardAction Command="{Binding ViewModel.NavigateCommand}"
+                               CommandParameter="navigate_to_settings"
+                               Icon="Settings20"
+                               Grid.ColumnSpan="3">
+                    <TextBlock Margin="0">
+                        <Run FontSize="13" FontWeight="Medium">Настройки</Run>
+                        <LineBreak/>
+                        <Run FontSize="12" Foreground="{DynamicResource TextFillColorTertiaryBrush}">Перейти к настройкам приложения</Run>
+                    </TextBlock>
+                </ui:CardAction>
+            </Grid>
+
+            <!--License-->
+            <ui:CardExpander Grid.Row="2" Margin="12 12 12 0" Icon="Receipt24">
+                <ui:CardExpander.Header>
+                    <TextBlock Text="ElvUI License" VerticalAlignment="Center" FontWeight="Medium"/>
+                </ui:CardExpander.Header>
+                <TextBlock TextWrapping="WrapWithOverflow">
+                ElvUI License
+                <LineBreak/>
+                <LineBreak/>
+                Copyright ©2009-2021 The contents of this addon, excluding third-party resources, are copyrighted to their authors with all rights reserved.                
+                <LineBreak/>
+                <LineBreak/>
+                The author of this addon hereby grants you the following rights:
+                <LineBreak/>
+                You may make modifications to this addon for private use only, you may not publicize any portion of this addon. The only exception being you may upload to the tukui.org or github website.
+                <LineBreak/>
+                Do not modify the name of this addon, including the addon folders.
+                <LineBreak/>
+                This copyright notice shall be included in all copies or substantial portions of the Software.
+                <LineBreak/>
+                All rights not explicitly addressed in this license are reserved by the copyright holders.
+                <LineBreak/>                
+                <LineBreak/>
+                You can write to us at contact@tukui.org for reporting abuse.
+                </TextBlock>
+            </ui:CardExpander>
+
+            <!--Links-->
+            <StackPanel Grid.Row="3" Margin="12 12 12 0">
+                <ui:Hyperlink Margin="0 0 0 4"
+                          Content="Сайт проекта"
+                          Icon="Link48"
+                          NavigateUri="https://www.tukui.org"/>
+                <ui:Hyperlink Margin="0 0 0 4"
+                          Content="Github"
+                          Icon="Link48"
+                          NavigateUri="https://github.com/tukui-org/ElvUI"/>
+            </StackPanel>
+        </Grid>
+        
+        <!--Installation Grid-->
+        <Grid Background="{DynamicResource ApplicationBackgroundBrush}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Grid.Style>
+                <Style TargetType="Grid">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding ViewModel.ButtonIsEnabled, Mode=OneWay}" Value="False">
+                            <Setter Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
+
+            <Image Grid.Column="0"
+                   MaxWidth="180"
+                   RenderOptions.BitmapScalingMode="HighQuality"
+                   Source="pack://application:,,,/Resources/abstract_shape.png"/>
+
+            <StackPanel Grid.Column="1" VerticalAlignment="Center" Background="{DynamicResource ApplicationBackgroundBrush}">
+                <ui:ProgressRing IsIndeterminate="True"/>
+                <TextBlock Margin="0 12 0 0"
+                           FontSize="16"
+                           FontWeight="Medium"
+                           Text="Установка"
+                           TextAlignment="Center"
+                           TextWrapping="Wrap"/>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</ui:UiPage>

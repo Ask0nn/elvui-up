@@ -12,7 +12,7 @@ namespace ElvUiUpdater.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.4.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.5.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -26,47 +26,60 @@ namespace ElvUiUpdater.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string WowPath {
+        public string WoWPath {
             get {
-                return ((string)(this["WowPath"]));
+                return ((string)(this["WoWPath"]));
             }
             set {
-                this["WowPath"] = value;
+                this["WoWPath"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string ReleaseVersion {
+        public string PTR {
             get {
-                return ((string)(this["ReleaseVersion"]));
+                return ((string)(this["PTR"]));
             }
             set {
-                this["ReleaseVersion"] = value;
+                this["PTR"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string UiVersion {
+        public string Classic {
             get {
-                return ((string)(this["UiVersion"]));
+                return ((string)(this["Classic"]));
             }
             set {
-                this["UiVersion"] = value;
+                this["Classic"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        public global::System.Collections.Specialized.StringCollection ReleaseVersions {
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string Retail {
             get {
-                return ((global::System.Collections.Specialized.StringCollection)(this["ReleaseVersions"]));
+                return ((string)(this["Retail"]));
             }
             set {
-                this["ReleaseVersions"] = value;
+                this["Retail"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool IsDark {
+            get {
+                return ((bool)(this["IsDark"]));
+            }
+            set {
+                this["IsDark"] = value;
             }
         }
     }

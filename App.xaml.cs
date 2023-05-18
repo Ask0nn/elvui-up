@@ -1,44 +1,82 @@
-﻿using ElvUiUpdater.Properties;
-using Microsoft.Win32;
-using System.Security.Principal;
-using System;
-using System.Collections.Specialized;
-using System.Linq;
+﻿using ElvUiUpdater.Services;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using System.IO;
+using System.Reflection;
 using System.Windows;
-using ElvUiUpdater.ViewModel;
+using System.Windows.Threading;
+using Wpf.Ui.Mvvm.Contracts;
+using Wpf.Ui.Mvvm.Services;
 
 namespace ElvUiUpdater
 {
-    /// <summary>
-    /// Interaction logic for App.xaml
-    /// </summary>
-    public partial class App : Application
+    public partial class App
     {
-        public App()
-        {
-            if (string.IsNullOrEmpty(Settings.Default.WowPath))
-                Settings.Default.WowPath = IsInstalled("World of Warcraft");
-        }
-
-        private void App_OnExit(object sender, ExitEventArgs e)
-        {
-            Settings.Default.Save();
-        }
-
-        public static string? IsInstalled(string pName)
-        {
-            var sid = new SecurityIdentifier(WellKnownSidType.BuiltinAdministratorsSid, null);
-            Console.WriteLine(WindowsIdentity.GetCurrent().User == sid);
-            var key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall");
-            foreach (var keyName in key?.GetSubKeyNames()!)
+        private static readonly IHost _host = Host
+            .CreateDefaultBuilder()
+            .ConfigureAppConfiguration(c => { c.SetBasePath(Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location)); })
+            .ConfigureServices((context, services) =>
             {
-                var subkey = key.OpenSubKey(keyName);
-                var displayName = subkey?.GetValue("DisplayName") as string;
-                if (pName.Equals(displayName, StringComparison.OrdinalIgnoreCase) == true)
-                    return subkey?.GetValue("InstallLocation") as string;
-            }
+                // App Host
+                services.AddHostedService<ApplicationHostService>();
 
-            return "Root game directory";
+                // Dialog service
+                services.AddSingleton<IDialogService, DialogService>();
+
+                // Page resolver service
+                services.AddSingleton<IPageService, PageService>();
+
+                // Theme manipulation
+                services.AddSingleton<IThemeService, ThemeService>();
+
+                // TaskBar manipulation
+                services.AddSingleton<ITaskBarService, TaskBarService>();
+
+                // Service containing navigation, same as INavigationWindow... but without window
+                services.AddSingleton<INavigationService, NavigationService>();
+
+                // Main window with navigation
+                services.AddScoped<INavigationWindow, Views.Windows.MainWindow>();
+                services.AddScoped<ViewModels.MainWindowViewModel>();
+
+                // Views and ViewModels
+                services.AddScoped<Views.Pages.HomePage>();
+                services.AddScoped<ViewModels.HomeViewModel>();
+                services.AddScoped<Views.Pages.AddonsListPage>();
+                services.AddScoped<ViewModels.AddonsListViewModel>();
+                services.AddScoped<Views.Pages.ElvUIPage>();
+                services.AddScoped<ViewModels.ElvUIViewModel>();
+                services.AddScoped<Views.Pages.AUIPage>();
+                services.AddScoped<ViewModels.AUIViewModel>();
+                services.AddScoped<Views.Pages.FAQPage>();
+                services.AddScoped<ViewModels.FAQViewModel>();
+                services.AddScoped<Views.Pages.SettingsPage>();
+                services.AddScoped<ViewModels.SettingsViewModel>();
+            }).Build();
+
+        public static T GetService<T>()
+            where T : class
+        {
+            return _host.Services.GetService(typeof(T)) as T;
+        }
+
+        private async void OnStartup(object sender, StartupEventArgs e)
+        {
+            await _host.StartAsync();
+        }
+
+        private async void OnExit(object sender, ExitEventArgs e)
+        {
+            await _host.StopAsync();
+
+            _host.Dispose();
+            ElvUiUpdater.Properties.Settings.Default.Save();
+        }
+
+        private void OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
+        {
+            
         }
     }
 }

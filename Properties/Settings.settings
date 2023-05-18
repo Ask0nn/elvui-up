@@ -2,17 +2,20 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ElvUiUpdater.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="WowPath" Type="System.String" Scope="User">
+    <Setting Name="WoWPath" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="ReleaseVersion" Type="System.String" Scope="User">
+    <Setting Name="PTR" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="UiVersion" Type="System.String" Scope="User">
+    <Setting Name="Classic" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="ReleaseVersions" Type="System.Collections.Specialized.StringCollection" Scope="User">
+    <Setting Name="Retail" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="IsDark" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
     </Setting>
   </Settings>
 </SettingsFile>

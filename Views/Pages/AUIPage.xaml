@@ -1,0 +1,301 @@
+﻿<ui:UiPage x:Class="ElvUiUpdater.Views.Pages.AUIPage"
+           xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+           xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+           xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+           xmlns:local="clr-namespace:ElvUiUpdater.Views.Pages"
+           xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+           xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+           Title="AUIPage"
+           d:DataContext="{d:DesignInstance local:AUIPage, IsDesignTimeCreatable=False}"
+           d:DesignWidth="800"
+           d:DesignHeight="750"
+           mc:Ignorable="d"
+           Scrollable="true">
+    <Grid>        
+        <!--Main Grid-->
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.Style>
+                <Style TargetType="Grid">
+                    <Setter Property="Visibility" Value="Visible"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding ViewModel.ButtonIsEnabled, Mode=OneWay}" Value="False">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
+
+            <!--Description-->
+            <Border Grid.Row="0" Height="500" CornerRadius="8 0 0 0">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0 0" EndPoint="1 1">
+                        <GradientStop Offset="0" Color="#4776E6"/>
+                        <GradientStop Offset="1" Color="#8E54E9"/>
+                    </LinearGradientBrush>
+                </Border.Background>
+                <Border CornerRadius="8 0 0 0">
+                    <Border.Background>
+                        <RadialGradientBrush>
+                            <GradientStop Offset="0" Color="#1F000000" />
+                            <GradientStop Offset="1" Color="#4F000000" />
+                        </RadialGradientBrush>
+                    </Border.Background>
+                    <Grid>
+                        <StackPanel Margin="64"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    Background="Transparent">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock FontSize="28"
+                                           FontWeight="Bold"
+                                           Foreground="#FFFFFF"
+                                           Text="Atrocity UI"/>
+                                <ui:Badge VerticalAlignment="Center"
+                                          Margin="5 -15 0 0"
+                                          Appearance="Success" 
+                                          Content="{Binding ViewModel.WebVersion, Mode=OneWay}"
+                                          ToolTip="Current version"/>
+                                <ui:Badge VerticalAlignment="Center"
+                                          Margin="1 -15 0 0"
+                                          Appearance="Caution" 
+                                          Content="{Binding ViewModel.InstalledVersionRetail, Mode=OneWay}"
+                                          ToolTip="Retail version"/>
+                                <ui:Badge VerticalAlignment="Center"
+                                          Margin="1 -15 0 0"
+                                          Appearance="Caution" 
+                                          Content="{Binding ViewModel.InstalledVersionClassic, Mode=OneWay}"
+                                          ToolTip="Classic version"/>
+                                <ui:Badge VerticalAlignment="Center"
+                                          Margin="1 -15 0 0"
+                                          Appearance="Caution" 
+                                          Content="{Binding ViewModel.InstalledVersionPTR, Mode=OneWay}"
+                                          ToolTip="PTR version"/>
+                            </StackPanel>
+                            <TextBlock FontSize="18" 
+                                       Foreground="#B7FFFFFF"
+                                       TextWrapping="WrapWithOverflow">
+                                Готовый интерфейс, где упор сделан в сторону ElvUI. Так же настроены дополнительные аддоны и
+                                есть инсталлер, который позволяет быстро применить настройки для всех аддонов.
+                            </TextBlock>
+                            <TextBlock FontSize="18" 
+                                       Foreground="#A3F7B5"
+                                       FontWeight="Bold"
+                                       TextWrapping="WrapWithOverflow">
+                                Обратите внимание!!! При установке данного UI ваши папки (WTF, Fonts, Interface) будут переименованы. 
+                                Это сделано для сохранения ваших старых настроек и аддонов.
+                            </TextBlock>
+                            <StackPanel Margin="0 8 0 0" Orientation="Horizontal">
+                                <ui:Button Height="36"
+                                           Padding="30 6"
+                                           Appearance="Transparent"
+                                           Command="{Binding ViewModel.InstallCommand}"
+                                           Content="Установить"
+                                           Icon="ArrowDownload24"
+                                           Foreground="{DynamicResource TextFillColorLightPrimaryBrush}"
+                                           IsEnabled="{Binding ViewModel.ButtonIsEnabled, Mode=OneWay}"/>
+                                <ComboBox Padding="30 7"
+                                          Margin="5 0 0 0"
+                                          ItemsSource="{Binding ViewModel.VersionTypes, Mode=OneWay}"
+                                          SelectedItem="{Binding ViewModel.VersionType, Mode=TwoWay}">
+
+                                </ComboBox>
+                            </StackPanel>
+                        </StackPanel>
+                        <TextBlock Margin="12"
+                                   HorizontalAlignment="Right"
+                                   VerticalAlignment="Bottom"
+                                   FontSize="10"
+                                   Foreground="#57FFFFFF"
+                                   Text="Created by Atrocity"/>
+                    </Grid>
+                </Border>
+            </Border>
+
+            <!--Card Actions-->
+            <Grid Grid.Row="1" Margin="12 12 12 0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <ui:CardAction Command="{Binding ViewModel.NavigateCommand}"
+                               CommandParameter="navigate_to_settings"
+                               Icon="Settings20"
+                               Grid.ColumnSpan="3">
+                    <TextBlock Margin="0">
+                        <Run FontSize="13" FontWeight="Medium">Настройки</Run>
+                        <LineBreak/>
+                        <Run FontSize="12" Foreground="{DynamicResource TextFillColorTertiaryBrush}">Перейти к настройкам приложения</Run>
+                    </TextBlock>
+                </ui:CardAction>
+
+                <ui:CardAction Command="{Binding ViewModel.UriNavigateCommand}"
+                               CommandParameter="https://github.com/kodewdle/IconPacks"
+                               Icon="Link24"
+                               Grid.Row="1"
+                               Grid.ColumnSpan="3"
+                               Margin="0 12 0 0">
+                    <TextBlock Margin="0">
+                        <Run FontSize="13" FontWeight="Medium">Clean Icons</Run>
+                        <LineBreak/>
+                        <Run FontSize="12" Foreground="{DynamicResource TextFillColorTertiaryBrush}">GitHub Clean Icons</Run>
+                    </TextBlock>
+                </ui:CardAction>
+
+                <ui:CardAction Command="{Binding ViewModel.UriNavigateCommand}"
+                               CommandParameter="https://pastebin.com/mdXUwMD3"
+                               Icon="Link24"
+                               Grid.Row="2"
+                               Margin="0 12 0 0">
+                    <TextBlock Margin="0">
+                        <Run FontSize="13" FontWeight="Medium">WeakAuras</Run>
+                        <LineBreak/>
+                        <Run FontSize="12" Foreground="{DynamicResource TextFillColorTertiaryBrush}">Pastebin WeakAuras</Run>
+                    </TextBlock>
+                </ui:CardAction>
+
+                <ui:CardAction Command="{Binding ViewModel.UriNavigateCommand}"
+                               CommandParameter="https://pastebin.com/anFCuMX1"
+                               Icon="Link24"
+                               Grid.Row="2"
+                               Grid.Column="1"
+                               Margin="6 12 0 0">
+                    <TextBlock Margin="0">
+                        <Run FontSize="13" FontWeight="Medium">ElvUI</Run>
+                        <LineBreak/>
+                        <Run FontSize="12" Foreground="{DynamicResource TextFillColorTertiaryBrush}">Pastebin ELVUI</Run>
+                    </TextBlock>
+                </ui:CardAction>
+
+                <ui:CardAction Command="{Binding ViewModel.UriNavigateCommand}"
+                               CommandParameter="https://pastebin.com/N4gUgRhN"
+                               Icon="Link24"
+                               Grid.Row="2"
+                               Grid.Column="2"
+                               Margin="6 12 0 0">
+                    <TextBlock Margin="0">
+                        <Run FontSize="13" FontWeight="Medium">Plater Nameplates</Run>
+                        <LineBreak/>
+                        <Run FontSize="12" Foreground="{DynamicResource TextFillColorTertiaryBrush}">Pastebin Plater Nameplates</Run>
+                    </TextBlock>
+                </ui:CardAction>
+
+                <ui:CardAction Command="{Binding ViewModel.UriNavigateCommand}"
+                               CommandParameter="https://pastebin.com/D61Q9mR6"
+                               Icon="Link24"
+                               Grid.Row="3"
+                               Margin="0 12 0 0">
+                    <TextBlock Margin="0">
+                        <Run FontSize="13" FontWeight="Medium">Details Damage Meter</Run>
+                        <LineBreak/>
+                        <Run FontSize="12" Foreground="{DynamicResource TextFillColorTertiaryBrush}">Pastebin Details Damage Meter</Run>
+                    </TextBlock>
+                </ui:CardAction>
+
+                <ui:CardAction Command="{Binding ViewModel.UriNavigateCommand}"
+                               CommandParameter="https://pastebin.com/TASsTPD9"
+                               Icon="Link24"
+                               Grid.Row="3"
+                               Grid.Column="1"
+                               Margin="6 12 0 0">
+                    <TextBlock Margin="0">
+                        <Run FontSize="13" FontWeight="Medium">OmniCD</Run>
+                        <LineBreak/>
+                        <Run FontSize="12" Foreground="{DynamicResource TextFillColorTertiaryBrush}">Pastebin OmniCD</Run>
+                    </TextBlock>
+                </ui:CardAction>
+
+                <ui:CardAction Command="{Binding ViewModel.UriNavigateCommand}"
+                               CommandParameter="https://pastebin.com/Pqjy1wJb"
+                               Icon="Link24"
+                               Grid.Row="3"
+                               Grid.Column="2"
+                               Margin="6 12 0 0">
+                    <TextBlock Margin="0">
+                        <Run FontSize="13" FontWeight="Medium">Method Raid Tools</Run>
+                        <LineBreak/>
+                        <Run FontSize="12" Foreground="{DynamicResource TextFillColorTertiaryBrush}">Pastebin Method Raid Tools</Run>
+                    </TextBlock>
+                </ui:CardAction>
+
+                <StackPanel Grid.Row="4" Grid.ColumnSpan="3" Margin="0 12 0 0">
+                    <TextBlock Text="Pastebin secret key" FontSize="12" FontWeight="Medium"/>
+                    <ui:PasswordBox Margin="0 6 0 0"
+                                    PlaceholderText="Pastebin secret key"
+                                    Icon="Key24"
+                                    Password="{Binding ViewModel.Key, Mode=OneWay}"
+                                    IsReadOnly="True"
+                                    FontSize="16"
+                                    FontWeight="Medium"/>
+                </StackPanel>
+            </Grid>
+
+            <!--Changelog-->
+            <ui:CardExpander Grid.Row="2" Margin="12 12 12 0" Icon="Receipt24">
+                <ui:CardExpander.Header>
+                    <TextBlock Text="AUI Changelog" VerticalAlignment="Center" FontWeight="Medium"/>
+                </ui:CardExpander.Header>
+                <TextBlock TextWrapping="WrapWithOverflow" Text="{Binding ViewModel.Changelog, Mode=OneWay}"/>
+            </ui:CardExpander>
+
+            <!--Links-->
+            <StackPanel Grid.Row="3" Margin="12 12 12 0">
+                <ui:Hyperlink Margin="0 0 0 4"
+                              Content="Discord AtrocityUI"
+                              Icon="Link48"
+                              NavigateUri="https://discord.com/invite/atrocity"/>
+                <ui:Hyperlink Margin="0 0 0 4"
+                              Content="TwitchTV Atrocity"
+                              Icon="Link48"
+                              NavigateUri="https://www.twitch.tv/atrocity"/>
+            </StackPanel>
+        </Grid>
+
+        <!--Installation Grid-->
+        <Grid Background="{DynamicResource ApplicationBackgroundBrush}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Grid.Style>
+                <Style TargetType="Grid">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding ViewModel.ButtonIsEnabled, Mode=OneWay}" Value="False">
+                            <Setter Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
+
+            <Image Grid.Column="0"
+                   MaxWidth="180"
+                   RenderOptions.BitmapScalingMode="HighQuality"
+                   Source="pack://application:,,,/Resources/abstract_shape.png"/>
+
+            <StackPanel Grid.Column="1" VerticalAlignment="Center" Background="{DynamicResource ApplicationBackgroundBrush}">
+                <ui:ProgressRing IsIndeterminate="True"/>
+                <TextBlock Margin="0 12 0 0"
+                           FontSize="16"
+                           FontWeight="Medium"
+                           Text="Установка"
+                           TextAlignment="Center"
+                           TextWrapping="Wrap"/>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</ui:UiPage>

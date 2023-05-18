@@ -1,14 +1,6 @@
-﻿using PropertyChanged;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ElvUiUpdater.Model
+﻿namespace ElvUiUpdater.Entity
 {
-    [AddINotifyPropertyChangedInterface]
-    internal class UiModel
+    public class ElvUI
     {
         public string? Name { get; set; }
         public string? Author { get; set; }

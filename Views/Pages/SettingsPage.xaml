@@ -1,0 +1,105 @@
+﻿<ui:UiPage x:Class="ElvUiUpdater.Views.Pages.SettingsPage"
+		   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		   xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+		   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		   xmlns:helpers="clr-namespace:ElvUiUpdater.Helpers"
+		   xmlns:properties="clr-namespace:ElvUiUpdater.Properties"
+		   xmlns:local="clr-namespace:ElvUiUpdater.Views.Pages"
+		   Title="SettingsPage"
+		   d:DataContext="{d:DesignInstance local:SettingsPage, IsDesignTimeCreatable=False}"
+		   d:DesignWidth="800"
+		   d:Background="{DynamicResource ApplicationBackgroundBrush}"
+		   Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+		   mc:Ignorable="d"
+		   Scrollable="True">
+
+	<ui:UiPage.Resources>
+		<helpers:EnumToBooleanConverter x:Key="EnumToBooleanConverter"/>
+		<properties:Settings x:Key="AppSettings" />
+	</ui:UiPage.Resources>
+
+	<Grid Margin="56 15">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition/>
+			<ColumnDefinition Width="Auto"/>
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition/>
+		</Grid.RowDefinitions>
+
+		<!--Theme-->
+        <StackPanel>
+            <TextBlock FontSize="20" FontWeight="Medium" Text="Персонализация"/>
+            <TextBlock Margin="0 12 0 0" Text="Выбранная тема"/>
+            <RadioButton Margin="0 12 0 0" 
+						 Command="{Binding ViewModel.ChangeThemeCommand, Mode=OneWay}"
+						 CommandParameter="theme_light"
+						 Content="Светлая"
+						 GroupName="themeSelect"
+						 IsChecked="{Binding ViewModel.CurrentTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Light, Mode=OneWay}"/>
+            <RadioButton Margin="0 8 0 24"
+						 Command="{Binding ViewModel.ChangeThemeCommand, Mode=OneWay}"
+						 CommandParameter="theme_dark"
+						 Content="Темная"
+						 GroupName="themeSelect"
+						 IsChecked="{Binding ViewModel.CurrentTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Dark, Mode=OneWay}"/>
+        </StackPanel>
+
+		<!--Information-->
+        <StackPanel Grid.Column="1" Margin="0 0 30 0">
+            <TextBlock FontSize="20" FontWeight="Medium" Text="ElvUI Updater"/>
+            <TextBlock Margin="0 12 0 0" Text="{Binding ViewModel.AppVersion, Mode=OneWay}" FontSize="14"/>
+            <TextBlock Margin="0 12 0 0" Text="Автор - Ask0n" FontSize="14"/>
+            <TextBlock Margin="0 12 0 0" FontSize="14">
+                <Hyperlink NavigateUri="https://github.com/Ask0nn/supply-app" RequestNavigate="Hyperlink_OnRequestNavigate">
+                    Страница проекта
+                </Hyperlink>
+            </TextBlock>
+            <TextBlock Margin="0 12 0 0" FontSize="14">
+                <Hyperlink NavigateUri="mailto:askonzir@gmail.com" RequestNavigate="Hyperlink_OnRequestNavigate">
+                    Эл. почта
+                </Hyperlink>
+            </TextBlock>
+        </StackPanel>
+
+        <!--Path-->
+        <StackPanel Grid.Row="1" Grid.ColumnSpan="2">
+            <TextBlock FontSize="20" FontWeight="Medium" Text="Путь с игрой"/>
+            <Grid Margin="0 12 0 0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <ui:TextBox Icon="Games20"
+                            IsEnabled="False"
+                            PlaceholderText="Путь к папке с игрой"
+                            Text="{Binding Source={StaticResource AppSettings}, Path=Default.WoWPath, Mode=OneWay}"/>
+                <ui:Button Grid.Column="1"
+                           Margin="10 0 0 0"
+                           Command="{Binding ViewModel.SelectFolderCommand, Mode=OneWay}">
+                    <ui:SymbolIcon Symbol="FolderOpen20" Filled="True"/>
+                </ui:Button>
+            </Grid>
+
+            <ui:TextBox Icon="Games20"
+                        Margin="0 12 0 0"
+                        IsEnabled="False"
+                        PlaceholderText="_retail_"
+                        Text="{Binding Source={StaticResource AppSettings}, Path=Default.Retail, Mode=OneWay}"/>
+            <ui:TextBox Icon="Games20"
+                        Margin="0 12 0 0"
+                        IsEnabled="False"
+                        PlaceholderText="_ptr_"
+                        Text="{Binding Source={StaticResource AppSettings}, Path=Default.PTR, Mode=OneWay}"/>
+            <ui:TextBox Icon="Games20" 
+                        Margin="0 12 0 0"
+                        IsEnabled="False"
+                        PlaceholderText="_classic_"
+                        Text="{Binding Source={StaticResource AppSettings}, Path=Default.Classic, Mode=OneWay}"/>
+        </StackPanel>
+    </Grid>
+</ui:UiPage>
