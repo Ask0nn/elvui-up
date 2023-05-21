@@ -34,13 +34,13 @@ namespace ElvUiUpdater.ViewModels
         private string _webVersion = "Loading...";
 
         [ObservableProperty]
-        private VersionType _versionType = VersionType._retail_;
+        private Models.VersionType _versionType = Models.VersionType._retail_;
 
         [ObservableProperty]
         private string _buttonContent = "Установить";
 
         [ObservableProperty]
-        private VersionType[] _versionTypes = Enum.GetValues<VersionType>();
+        private Models.VersionType[] _versionTypes = Enum.GetValues<Models.VersionType>();
 
         [ObservableProperty]
         private bool _buttonIsEnabled = true;
@@ -56,8 +56,27 @@ namespace ElvUiUpdater.ViewModels
             if (!_isInitialized)
                 InitializeViewModel();
 
-            LoadVersions(); 
-            ValidateInstallationConditions();
+            LoadVersions();
+        }
+
+        private void SetButtonContent(Models.VersionType versionType)
+        {
+            switch (versionType)
+            {
+                case Models.VersionType._retail_:
+                    if (!string.IsNullOrEmpty(Properties.Settings.Default.Retail))
+                        ButtonContent = InstalledVersionRetail == "Not installed" ? "Установить" : "Обновить";
+                    break;
+                case Models.VersionType._classic_:
+                    if (!string.IsNullOrEmpty(Properties.Settings.Default.Classic))
+                        ButtonContent = InstalledVersionClassic == "Not installed" ? "Установить" : "Обновить";
+                    break;
+                case Models.VersionType._ptr_:
+                    if (!string.IsNullOrEmpty(Properties.Settings.Default.PTR))
+                        ButtonContent = InstalledVersionPTR == "Not installed" ? "Установить" : "Обновить";
+                    else ButtonContent = "Установить";
+                    break;
+            }
         }
 
         public void OnNavigatedFrom()
@@ -75,58 +94,17 @@ namespace ElvUiUpdater.ViewModels
 
         private async void LoadVersions()
         {
-            InstalledVersionRetail = _tukuiApi.GetVersion(VersionType._retail_);
-            InstalledVersionClassic = _tukuiApi.GetVersion(VersionType._classic_);
-            InstalledVersionPTR = _tukuiApi.GetVersion(VersionType._ptr_);
-            WebVersion = await _tukuiApi.GetOnlineVersion(VersionType._retail_);
+            InstalledVersionRetail = _tukuiApi.GetVersion(Models.VersionType._retail_);
+            InstalledVersionClassic = _tukuiApi.GetVersion(Models.VersionType._classic_);
+            InstalledVersionPTR = _tukuiApi.GetVersion(Models.VersionType._ptr_);
+            WebVersion = await _tukuiApi.GetOnlineVersion(Models.VersionType._retail_);
 
-            switch (VersionType)
-            {
-                case VersionType._retail_:
-                    if (string.IsNullOrEmpty(Properties.Settings.Default.Retail))
-                        ButtonContent = InstalledVersionRetail == "Not installed" ? "Установить" : "Обновить";
-                    break;
-                case VersionType._classic_:
-                    if (string.IsNullOrEmpty(Properties.Settings.Default.Classic))
-                        ButtonContent = InstalledVersionClassic == "Not installed" ? "Установить" : "Обновить";
-                    break;
-                case VersionType._ptr_:
-                    if (string.IsNullOrEmpty(Properties.Settings.Default.PTR))
-                        ButtonContent = InstalledVersionPTR == "Not installed" ? "Установить" : "Обновить";
-                    else ButtonContent = "Установить";
-                    break;
-            }
+            SetButtonContent(VersionType);
         }
 
-        private bool ValidateInstallationConditions()
+        partial void OnVersionTypeChanged(Models.VersionType value)
         {
-            if (string.IsNullOrEmpty(Properties.Settings.Default.WoWPath) &&
-                (string.IsNullOrEmpty(Properties.Settings.Default.Retail) || string.IsNullOrEmpty(Properties.Settings.Default.Classic)))
-            {
-                _dialogControl.Show("Предупреждение", "Перед установкой ElvUI, вам нужно указать путь к папке с игрой.");
-                return false;
-            }
-            return true;
-        }
-
-        partial void OnVersionTypeChanged(VersionType value)
-        {
-            switch (VersionType)
-            {
-                case VersionType._retail_:
-                    if (string.IsNullOrEmpty(Properties.Settings.Default.Retail))
-                        ButtonContent = InstalledVersionRetail == "Not installed" ? "Установить" : "Обновить";
-                    break;
-                case VersionType._classic_:
-                    if (string.IsNullOrEmpty(Properties.Settings.Default.Classic))
-                        ButtonContent = InstalledVersionClassic == "Not installed" ? "Установить" : "Обновить";
-                    break;
-                case VersionType._ptr_:
-                    if (string.IsNullOrEmpty(Properties.Settings.Default.PTR))
-                        ButtonContent = InstalledVersionPTR == "Not installed" ? "Установить" : "Обновить";
-                    else ButtonContent = "Установить";
-                    break;
-            }
+            SetButtonContent(VersionType);
         }
 
         private void DialogControlOnButtonRightClick(object sender, RoutedEventArgs e)
@@ -197,6 +175,27 @@ namespace ElvUiUpdater.ViewModels
         [RelayCommand]
         private void OnInstall()
         {
+            if (string.IsNullOrEmpty(Properties.Settings.Default.WoWPath))
+            {
+                _dialogControl.Show("Предупреждение", "Перед установкой ElvUI, вам нужно указать путь к папке с игрой.");
+                return;
+            } 
+            else if (string.IsNullOrEmpty(Properties.Settings.Default.Retail) && VersionType.Equals(Models.VersionType._retail_))
+            {
+                _dialogControl.Show("Предупреждение", "Путь к папке _retail_ не найден!");
+                return;
+            }
+            else if (string.IsNullOrEmpty(Properties.Settings.Default.Classic) && VersionType.Equals(Models.VersionType._classic_))
+            {
+                _dialogControl.Show("Предупреждение", "Путь к папке _classic_ не найден!");
+                return;
+            }
+            else if (string.IsNullOrEmpty(Properties.Settings.Default.PTR) && VersionType.Equals(Models.VersionType._ptr_))
+            {
+                _dialogControl.Show("Предупреждение", "Путь к папке _ptr_ не найден!");
+                return;
+            }
+
             Task.Run(async () =>
             {
                 App.Current.Dispatcher.Invoke(() =>
@@ -210,13 +209,13 @@ namespace ElvUiUpdater.ViewModels
                 {
                     switch (VersionType)
                     {
-                        case VersionType._retail_:
+                        case Models.VersionType._retail_:
                             await InstallRetail();
                             break;
-                        case VersionType._classic_:
+                        case Models.VersionType._classic_:
                             await InstallClassic();
                             break;
-                        case VersionType._ptr_:
+                        case Models.VersionType._ptr_:
                             await InstallPTR();
                             break;
                     }

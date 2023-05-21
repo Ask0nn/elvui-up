@@ -1,4 +1,4 @@
-﻿namespace ElvUiUpdater
+﻿namespace ElvUiUpdater.Models
 {
     public enum VersionType
     {

@@ -34,10 +34,10 @@ namespace ElvUiUpdater.ViewModels
         private string _webVersion = "Loading...";
 
         [ObservableProperty]
-        private VersionType _versionType = VersionType._retail_;
+        private Models.VersionType _versionType = Models.VersionType._retail_;
 
         [ObservableProperty]
-        private VersionType[] _versionTypes = Enum.GetValues<VersionType>();
+        private Models.VersionType[] _versionTypes = Enum.GetValues<Models.VersionType>();
 
         [ObservableProperty]
         private bool _buttonIsEnabled = true;
@@ -59,7 +59,6 @@ namespace ElvUiUpdater.ViewModels
             if (!_isInitialized)
                 InitializeViewModel();
 
-            ValidateInstallationConditions();
             LoadVersions();
         }
 
@@ -86,31 +85,10 @@ namespace ElvUiUpdater.ViewModels
 
         private async void LoadVersions()
         {
-            InstalledVersionRetail = _atrocityApi.GetVersion(VersionType._retail_);
-            InstalledVersionClassic = _atrocityApi.GetVersion(VersionType._classic_);
-            InstalledVersionPTR = _atrocityApi.GetVersion(VersionType._ptr_);
+            InstalledVersionRetail = _atrocityApi.GetVersion(Models.VersionType._retail_);
+            InstalledVersionClassic = _atrocityApi.GetVersion(Models.VersionType._classic_);
+            InstalledVersionPTR = _atrocityApi.GetVersion(Models.VersionType._ptr_);
             WebVersion = await _atrocityApi.GetOnlineVersion();
-        }
-
-        private bool ValidateInstallationConditions()
-        {
-            if (string.IsNullOrEmpty(Properties.Settings.Default.WoWPath) &&
-                (string.IsNullOrEmpty(Properties.Settings.Default.Retail) || string.IsNullOrEmpty(Properties.Settings.Default.Classic)))
-            {
-                _dialogControl.Show("Предупреждение", "Перед установкой AUI, вам нужно указать путь к папке с игрой.");
-                return false;
-            }
-            return true;
-        }
-
-        private bool ValidatePTRInstallationConditions()
-        {
-            if (string.IsNullOrEmpty(Properties.Settings.Default.WoWPath) || string.IsNullOrEmpty(Properties.Settings.Default.PTR))
-            {
-                _dialogControl.Show("Предупреждение", "Версия PTR доступна только если у вас установлена PTR версия игры.");
-                return false;
-            }
-            return true;
         }
 
         private async Task Install(string rootVersionPath)
@@ -165,6 +143,27 @@ namespace ElvUiUpdater.ViewModels
         [RelayCommand]
         private void OnInstall()
         {
+            if (string.IsNullOrEmpty(Properties.Settings.Default.WoWPath))
+            {
+                _dialogControl.Show("Предупреждение", "Перед установкой AUI, вам нужно указать путь к папке с игрой.");
+                return;
+            }
+            else if (string.IsNullOrEmpty(Properties.Settings.Default.Retail) && VersionType.Equals(Models.VersionType._retail_))
+            {
+                _dialogControl.Show("Предупреждение", "Путь к папке _retail_ не найден!");
+                return;
+            }
+            else if (string.IsNullOrEmpty(Properties.Settings.Default.Classic) && VersionType.Equals(Models.VersionType._classic_))
+            {
+                _dialogControl.Show("Предупреждение", "Путь к папке _classic_ не найден!");
+                return;
+            }
+            else if (string.IsNullOrEmpty(Properties.Settings.Default.PTR) && VersionType.Equals(Models.VersionType._ptr_))
+            {
+                _dialogControl.Show("Предупреждение", "Путь к папке _ptr_ не найден!");
+                return;
+            }
+
             Task.Run(async () =>
             {
                 App.Current.Dispatcher.Invoke(() =>
@@ -178,16 +177,13 @@ namespace ElvUiUpdater.ViewModels
                 {
                     switch (VersionType)
                     {
-                        case VersionType._retail_:
-                            if (ValidateInstallationConditions())
+                        case Models.VersionType._retail_:
                                 await Install(Properties.Settings.Default.Retail);
                             break;
-                        case VersionType._classic_:
-                            if (ValidateInstallationConditions())
+                        case Models.VersionType._classic_:
                                 await Install(Properties.Settings.Default.Classic);
                             break; ;
-                        case VersionType._ptr_:
-                            if (ValidatePTRInstallationConditions())
+                        case Models.VersionType._ptr_:
                                 await Install(Properties.Settings.Default.PTR);
                             break;
                     }

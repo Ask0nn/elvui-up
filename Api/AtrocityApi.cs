@@ -1,4 +1,5 @@
 ﻿using System;
+using ElvUiUpdater.Models;
 using System.IO;
 using System.Net.Http;
 using System.Text.RegularExpressions;
@@ -58,7 +59,7 @@ namespace ElvUiUpdater.Api
             if (!ValidateInstallation(type))
                 return "Not installed";
 
-            return ExtractVersionFromContent(File.ReadAllText(Path.Combine(Properties.Settings.Default.WoWPath, type.ToString(), PATH_OF_ADDONS, AUI, AUI_TOC_FILENAME)));
+            return ExtractVersionFromContent(System.IO.File.ReadAllText(Path.Combine(Properties.Settings.Default.WoWPath, type.ToString(), PATH_OF_ADDONS, AUI, AUI_TOC_FILENAME)));
         }
 
         public async Task<string> GetOnlineVersion()
@@ -72,7 +73,7 @@ namespace ElvUiUpdater.Api
         {
             var path = Path.Combine(rootVersionPath, Path.GetFileName(new Uri(AUI_LOAD_URL).LocalPath));
             var response = await _client.GetByteArrayAsync(AUI_LOAD_URL);
-            await File.WriteAllBytesAsync(path, response);
+            await System.IO.File.WriteAllBytesAsync(path, response);
             return path;
         }
 

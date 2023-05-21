@@ -1,4 +1,5 @@
 ﻿using ElvUiUpdater.Entity;
+using ElvUiUpdater.Models;
 using System;
 using System.IO;
 using System.Net.Http;
@@ -60,7 +61,7 @@ namespace ElvUiUpdater.Api
             if (!ValidateInstallation(type))
                 return "Not installed";
 
-            return ExtractVersionFromContent(File.ReadAllText(Path.Combine(Properties.Settings.Default.WoWPath, type.ToString(), PATH_OF_ADDONS, ELVUI, ELVUI_TOC_FILENAME)));
+            return ExtractVersionFromContent(System.IO.File.ReadAllText(Path.Combine(Properties.Settings.Default.WoWPath, type.ToString(), PATH_OF_ADDONS, ELVUI, ELVUI_TOC_FILENAME)));
         }
 
         public async Task<ElvUI> GetElvUIInfo()
@@ -74,7 +75,7 @@ namespace ElvUiUpdater.Api
             var elvui = await GetElvUIInfo();
             var path = Path.Combine(addonsPath, Path.GetFileName(new Uri(elvui.Url!).LocalPath));
             var response = await _client.GetByteArrayAsync(elvui.Url);
-            await File.WriteAllBytesAsync(path, response);
+            await System.IO.File.WriteAllBytesAsync(path, response);
             return path;
         }
 
@@ -82,7 +83,7 @@ namespace ElvUiUpdater.Api
         {
             var path = Path.Combine(addonsPath, Path.GetFileName(new Uri(TUKUI_PTR).LocalPath));
             var response = await _client.GetByteArrayAsync(TUKUI_PTR);
-            await File.WriteAllBytesAsync(path, response);
+            await System.IO.File.WriteAllBytesAsync(path, response);
             return path;
         }
 
