@@ -82,7 +82,7 @@
                             <StackPanel Margin="0 8 0 0" Orientation="Horizontal">
                                 <ui:Button Height="36"
                                        Padding="30 6"
-                                       Appearance="Transparent"
+                                       Appearance="Success"
                                        Command="{Binding ViewModel.InstallCommand}"
                                        Content="{Binding ViewModel.ButtonContent, Mode=OneWay}"
                                        Icon="ArrowDownload24"

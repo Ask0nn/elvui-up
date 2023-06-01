@@ -11,8 +11,6 @@ namespace ElvUiUpdater.Models.CurseForge
         public Uri Url { get; set; }
         public Uri IconUrl { get; set; }
         public DateTime DateModified { get; set; }
-        public bool IsClass { get; set; }
-        public int ClassId { get; set; }
         public int ParentCategoryId { get; set; }
     }
 }

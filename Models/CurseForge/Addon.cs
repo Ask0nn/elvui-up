@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace ElvUiUpdater.Models.CurseForge
 {
@@ -12,6 +8,12 @@ namespace ElvUiUpdater.Models.CurseForge
         public int GameId { get; set; }
         public string Name { get; set; }
         public Dictionary<string, string> Links { get; set; }
-        public int MyProperty { get; set; }
+        public int Status { get; set; }
+        public int PrimaryCategoryId { get; set; }
+        public Category[] Categories { get; set; }
+        public Author[] Authors { get; set; }
+        public Logo Logo { get; set; }
+        public int MainFileId { get; set; }
+
     }
 }
