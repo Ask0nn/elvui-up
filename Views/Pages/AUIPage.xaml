@@ -93,7 +93,7 @@
                             <StackPanel Margin="0 8 0 0" Orientation="Horizontal">
                                 <ui:Button Height="36"
                                            Padding="30 6"
-                                           Appearance="Transparent"
+                                           Appearance="Success"
                                            Command="{Binding ViewModel.InstallCommand}"
                                            Content="Установить"
                                            Icon="ArrowDownload24"
@@ -105,6 +105,24 @@
                                           SelectedItem="{Binding ViewModel.VersionType, Mode=TwoWay}">
 
                                 </ComboBox>
+                                <ui:ToggleSwitch Margin="10 0" 
+                                                 IsChecked="{Binding ViewModel.IsRetentionInstall, Mode=TwoWay}"
+                                                 Content="Установка с заменой"
+                                                 ToolTip="Аддоны которые вы сами ставили останутся, а аддоны для AUI обновятся"/>                                
+                            </StackPanel>
+                            <StackPanel Margin="0 8 0 0" Orientation="Horizontal">
+                                <ui:Button Height="36"
+                                           Padding="30 6"
+                                           Appearance="Danger"
+                                           Command="{Binding ViewModel.DeleteOldFoldersCommand, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                           Content="Удалить старые папки"
+                                           ToolTip="Удаление старых папок (Interface, Fonts и т.д.))"
+                                           Icon="Delete24"
+                                           Foreground="{DynamicResource TextFillColorLightPrimaryBrush}"
+                                           IsEnabled="{Binding ElementName=DeleteConfirmation, Path=IsChecked}"/>
+                                <ui:ToggleSwitch Margin="10 0"
+                                                 Name="DeleteConfirmation"
+                                                 Content="Вы уверены ?"/>
                             </StackPanel>
                         </StackPanel>
                         <TextBlock Margin="12"

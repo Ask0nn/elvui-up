@@ -9,6 +9,7 @@ using Wpf.Ui.Common.Interfaces;
 using Wpf.Ui.Controls.Interfaces;
 using Wpf.Ui.Mvvm.Contracts;
 using System.Windows;
+using System.Linq;
 
 namespace ElvUiUpdater.ViewModels
 {
@@ -47,6 +48,9 @@ namespace ElvUiUpdater.ViewModels
 
         [ObservableProperty]
         private string _key = string.Empty;
+
+        [ObservableProperty]
+        private bool _isRetentionInstall = false;
 
         public AUIViewModel(INavigationService navigationService, IDialogService dialogService)
         {
@@ -113,6 +117,30 @@ namespace ElvUiUpdater.ViewModels
 
             Directory.Delete(Path.Combine(rootVersionPath, "aui-load-main"), true);
             File.Delete(auiZip);
+
+            if (IsRetentionInstall)
+            {
+                var addonRootDir = Path.Combine(rootVersionPath, "Interface", "Addons");
+                var dirs = Directory.GetDirectories(Path.Combine(rootVersionPath, "___Interface", "Addons"));
+                foreach (var dir in dirs)
+                {
+                    var path = Path.Combine(addonRootDir, Path.GetFileName(dir));
+                    if (Directory.Exists(path)) continue;
+                    Directory.Move(dir, Path.Combine(addonRootDir, Path.GetFileName(dir)));
+                }
+            }
+        }
+
+        [RelayCommand]
+        private void OnDeleteOldFolders()
+        {
+            var rootVersionPath = VersionType == Models.VersionType._retail_ ? Properties.Settings.Default.Retail :
+                VersionType == Models.VersionType._classic_ ? Properties.Settings.Default.Classic : Properties.Settings.Default.PTR;
+            foreach (string folder in AtrocityApi.FOLDERS_TO_CHECK)
+                if (Directory.Exists(Path.Combine(rootVersionPath, "___" + folder)))
+                        Directory.Delete(Path.Combine(rootVersionPath, "___" + folder));
+
+            _dialogControl.Show("", "Готово");
         }
 
         [RelayCommand]
