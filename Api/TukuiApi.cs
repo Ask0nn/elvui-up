@@ -4,6 +4,7 @@ using System;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -18,16 +19,11 @@ namespace ElvUiUpdater.Api
         public const string ELVUI_TOC_FILENAME = "ElvUI_Mainline.toc";
         public static readonly string[] FOLDERS_TO_EXTRACT = { "ElvUI", "ElvUI_Libraries", "ElvUI_Options" };
 
-        private const string TUKUI_ENDPOINT = "https://www.tukui.org/api.php";
+        private const string TUKUI_ENDPOINT = "https://api.tukui.org/v1/";
         private const string TUKUI_PTR = "https://github.com/tukui-org/ElvUI/archive/ptr.zip";
         private const string ELVUI_GITHUB_URL = "https://raw.githubusercontent.com/tukui-org/ElvUI";
 
-        private readonly HttpClient _client;
-
-        public TukuiApi()
-        {
-            _client = new HttpClient();
-        }
+        private readonly HttpClient _client = new HttpClient();
 
         public bool ValidateInstallation(VersionType type)
         {
@@ -47,13 +43,7 @@ namespace ElvUiUpdater.Api
         {
             Regex regex = new Regex(@"^\s*## Version:\s*(.*)$", RegexOptions.Multiline);
             Match match = regex.Match(fileContent);
-
-            if (match.Success)
-            {
-                return match.Groups[1].Value.Trim();
-            }
-
-            return "ERROR";
+            return match.Success ? match.Groups[1].Value.Trim() : "ERROR";
         }
 
         public string GetVersion(VersionType type)
@@ -66,14 +56,14 @@ namespace ElvUiUpdater.Api
 
         public async Task<ElvUI> GetElvUIInfo()
         {
-            var response = await _client.GetFromJsonAsync<ElvUI>(TUKUI_ENDPOINT + "?ui=elvui");
+            var response = await _client.GetFromJsonAsync<ElvUI>(TUKUI_ENDPOINT + "addon/elvui");
             return response!;
         }
 
         public async Task<string> DownloadElvUI(string addonsPath)
         {
             var elvui = await GetElvUIInfo();
-            var path = Path.Combine(addonsPath, Path.GetFileName(new Uri(elvui.Url!).LocalPath));
+            var path = Path.Combine(addonsPath, "elvui.zip");
             var response = await _client.GetByteArrayAsync(elvui.Url);
             await System.IO.File.WriteAllBytesAsync(path, response);
             return path;
