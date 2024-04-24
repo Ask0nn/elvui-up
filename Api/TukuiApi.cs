@@ -79,10 +79,13 @@ namespace ElvUiUpdater.Api
 
         public async Task<string> GetOnlineVersion(VersionType type)
         {
-            string version = type == VersionType._retail_ || type == VersionType._classic_ ? "main" : "ptr";
-            string url = $"{ELVUI_GITHUB_URL}/{version}/{ELVUI}/{ELVUI_TOC_FILENAME}";
-            string fileContent = await _client.GetStringAsync(url);
-            return ExtractVersionFromContent(fileContent);
+            //string version = type == VersionType._retail_ || type == VersionType._classic_ ? "main" : "ptr";
+            //string url = $"{ELVUI_GITHUB_URL}/{version}/{ELVUI}/{ELVUI_TOC_FILENAME}";
+            //string fileContent = await _client.GetStringAsync(url);
+            //return ExtractVersionFromContent(fileContent);
+
+            var elvui = await GetElvUIInfo();
+            return elvui.Version!;
         }
     }
 }
